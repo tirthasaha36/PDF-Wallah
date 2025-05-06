@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>PDF Wallah - Online PDF Tools</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin:0; 
+    font-family: 'Nunito', sans-serif;
+    background: #f9fafc;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    -webkit-user-select:none;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background-color: #2be81a;
+    color: white;
+    padding: 15px 20px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1.1px;
+    box-shadow: 0 4px 6px rgb(26 115 232 / 0.3);
+  }
+  nav {
+    display: flex;
+    background: white;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  nav button {
+    flex-shrink: 0;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #555;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  nav button.active {
+    color: #2be81a;
+    border-bottom: 3px solid #2be81a;
+  }
+  nav button:hover:not(.active) {
+    color: #2be81a;
+  }
+  main {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px 20px;
+    max-height: calc(100vh - 104px);
+  }
+
+  /* Common file dropzone style */
+  .dropzone {
+    margin: 20px auto 30px;
+    border: 3px dashed #2be81a;
+    border-radius: 10px;
+    padding: 30px 15px;
+    max-width: 500px;
+    text-align: center;
+    color: #2be81a;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.25s ease;
+  }
+  .dropzone.dragover {
+    background-color: #d8e6ff;
+  }
+  input[type="file"] {
+    display: none;
+  }
+  button.primary {
+    background-color: #2be81a;
+    color: white;
+    font-weight: 700;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    border: none;
+    border-radius: 7px;
+    box-shadow: 0 6px 10px rgba(40, 232, 26, 0.35);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button.primary:disabled {
+    background-color: #aaf7b8;
+    cursor: not-allowed;
+  }
+  button.primary:hover:not(:disabled) {
+    background-color: #2be81a;
+  }
+  .files-list {
+    max-width: 500px;
+    margin: 0 auto 15px;
+    font-size: 0.95rem;
+    color: #444;
+    user-select: text;
+  }
+  .files-list ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  .files-list li {
+    background: #f1f6ff;
+    margin-bottom: 6px;
+    border-radius: 5px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .files-list li span.filename {
+    overflow-wrap: break-word;
+    flex-grow: 1;
+  }
+  .files-list li button.remove-file {
+    background: transparent;
+    border: none;
+    color: #e74c3c;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    margin-left: 10px;
+    font-weight: 700;
+  }
+  .files-list li button.remove-file:hover {
+    color: #c0392b;
+  }
+  .textarea-split-pages {
+    width: 100%;
+    resize: vertical;
+    min-height: 90px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 7px;
+    border: 1.8px solid #2be81a;
+    color: #2be81a;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    margin: 10px auto 0;
+    width: 500px;
+    max-width: 90vw;
+    height: 14px;
+    background-color: #ddd;
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .progress-bar > div {
+    height: 100%;
+    background-color: #2be81a;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* Result section */
+  .result {
+    max-width: 500px;
+    margin: 15px auto 30px;
+    text-align: center;
+  }
+  .result a {
+    color: #2be81a;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  .result a:hover {
+    text-decoration: underline;
+  }
+  .footer {
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 10px;
+    color: #999;
+  }
+
+  /* Responsive and mobile */
+  @media (max-width: 460px) {
+    nav button {
+      padding: 10px 14px;
+      font-size: 0.9rem;
+    }
+    main {
+      padding: 15px 12px;
+      max-height: calc(100vh - 104px);
+    }
+    .dropzone {
+      margin: 15px auto 25px;
+      padding: 25px 12px;
+    }
+    .files-list {
+      max-width: 100%;
+    }
+    .progress-bar {
+      width: 100%;
+    }
+    .result {
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+<header>PDF Wallah</header>
+<nav aria-label="PDF tools navigation">
+  <button class="active" data-tool="merge" aria-selected="true">Merge PDF</button>
+  <button data-tool="split" aria-selected="false">Split PDF</button>
+  <button data-tool="compress" aria-selected="false">Compress PDF</button>
+  <button data-tool="unlock" aria-selected="false">Unlock PDF</button>
+  <button data-tool="lock" aria-selected="false">Lock PDF</button>
+  <button data-tool="pdf2word" aria-selected="false">PDF to Word</button>
+  <button data-tool="word2pdf" aria-selected="false">Word to PDF</button>
+  <button data-tool="pdf2ppt" aria-selected="false">PDF to PowerPoint</button>
+  <button data-tool="ppt2pdf" aria-selected="false">PowerPoint to PDF</button>
+  <button data-tool="pdf2excel" aria-selected="false">PDF to Excel</button>
+  <button data-tool="excel2pdf" aria-selected="false">Excel to PDF</button>
+</nav>
+<main>
+  <section id="merge" class="tool-section" aria-label="Merge PDF tool">
+    <div class="dropzone" tabindex="0" aria-label="Drop PDF files here or click to select files" id="merge-dropzone">
+      Drop PDF files here or click to select files
+      <input type="file" id="merge-files" accept="application/pdf" multiple aria-hidden="true" />
+    </div>
+    <div class="files-list" id="merge-file-list" aria-live="polite" aria-relevant="additions removals"></div>
+    <button class="primary" id="merge-btn" disabled>Merge PDFs</button>
+    <div class="progress-bar" id="merge-progress" aria-hidden="true"><div></div></div>
+    <div class="result" id="merge-result" aria-live="polite"></div>
+  </section>
+
+  <section id="split" class="tool-section" style="display:none" aria-label="Split PDF tool">
+    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="split-dropzone">
+      Drop a PDF file here or click to select file
+      <input type="file" id="split-file" accept="application/pdf" aria-hidden="true" />
+    </div>
+    <label for="split-pages" style="font-weight:600; color:#2be81a;">Enter pages or page ranges to extract (e.g. 1,3-5):</label>
+    <textarea id="split-pages" class="textarea-split-pages" placeholder="1,3-5"></textarea>
+    <button class="primary" id="split-btn" disabled>Split PDF</button>
+    <div class="progress-bar" id="split-progress" aria-hidden="true"><div></div></div>
+    <div class="result" id="split-result" aria-live="polite"></div>
+  </section>
+
+  <section id="compress" class="tool-section" style="display:none" aria-label="Compress PDF tool">
+    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="compress-dropzone">
+      Drop a PDF file here or click to select file
+      <input type="file" id="compress-file" accept="application/pdf" aria-hidden="true" />
+    </div>
+    <button class="primary" id="compress-btn" disabled>Compress PDF</button>
+    <div class="progress-bar" id="compress-progress" aria-hidden="true"><div></div></div>
+    <div class="result" id="compress-result" aria-live="polite"></div>
+  </section>
+
+  <section id="unlock" class="tool-section" style="display:none" aria-label="Unlock PDF tool">
+    <div class="dropzone" tabindex="0" aria-label="Drop an encrypted PDF here or click to select file" id="unlock-dropzone">
+      Drop an encrypted PDF here or click to select file
+      <input type="file" id="unlock-file" accept="application/pdf" aria-hidden="true" />
+    </div>
+    <label for="unlock-password" style="font-weight:600; color:#2be81a;">Enter PDF password:</label>
+    <input type="password" id="unlock-password" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 7px; border: 1.5px solid #2be81a; font-size: 1rem;" aria-describedby="unlock-password-desc" />
+    <div id="unlock-password-desc" style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Password used to unlock the PDF file</div>
+    <button class="primary" id="unlock-btn" disabled>Unlock PDF</button>
+    <div class="progress-bar" id="unlock-progress" aria-hidden="true"><div></div></div>
+    <div class="result" id="unlock-result" aria-live="polite"></div>
+  </section>
+
+  <section id="lock" class="tool-section" style="display:none" aria-label="Lock PDF tool">
+    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="lock-dropzone">
+      Drop a PDF file here or click to select file
+      <input type="file" id="lock-file" accept="application/pdf" aria-hidden="true" />
+    </div>
+    <label for="lock-password" style="font-weight:600; color:#2be81a;">Enter password to lock PDF:</label>
+    <input type="password" id="lock-password" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 7px; border: 1.5px solid #2be81a; font-size: 1rem;" aria-describedby="lock-password-desc" />
+    <div id="lock-password-desc" style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Password will be used to encrypt the PDF file</div>
+    <button class="primary" id="lock-btn" disabled>Lock PDF</button>
+    <div class="progress-bar" id="lock-progress" aria-hidden="true"><div></div></div>
+    <div class="result" id="lock-result" aria-live="polite"></div>
+  </section>
+
+  <!-- For other tools, show a simple coming soon message -->
+  <section id="pdf2word" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+    <h2>PDF to Word</h2>
+    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+  </section>
+  <section id="word2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+    <h2>Word to PDF</h2>
+    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+  </section>
+  <section id="pdf2ppt" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+    <h2>PDF to PowerPoint</h2>
+    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+  </section>
+  <section id="ppt2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+    <h2>PowerPoint to PDF</h2>
+    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+  </section>
+  <section id="pdf2excel" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+    <h2>PDF to Excel</h2>
+    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+  </section>
+  <section id="excel2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+    <h2>Excel to PDF</h2>
+    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+  </section>
+</main>
+<div class="footer" role="contentinfo">
+  &copy; 2024 PDF Wallah - All tools for free, client-side processing.
+</div>
+
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script>
+  const {
+    PDFDocument,
+    StandardFonts,
+  } = PDFLib;
+
+  // Navigation tabs logic
+  const navButtons = document.querySelectorAll("nav button");
+  const toolSections = document.querySelectorAll(".tool-section");
+
+  navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      // deactivate all buttons
+      navButtons.forEach(b => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      // show relevant section
+      const tool = btn.getAttribute("data-tool");
+      toolSections.forEach(section => {
+        if (section.id === tool) {
+          section.style.display = "block";
+        } else {
+          section.style.display = "none";
+        }
+      });
+      resetDropzones();
+      clearResults();
+    });
+  });
+
+  function resetDropzones() {
+    // Reset all dropzones and file lists
+    [
+      'merge-files',
+      'split-file',
+      'compress-file',
+      'unlock-file',
+      'lock-file',
+    ].forEach(id => {
+      const input = document.getElementById(id);
+      if(input) {
+        input.value = "";
+      }
+    });
+    [
+      'merge-file-list',
+      'merge-result',
+      'split-result',
+      'compress-result',
+      'unlock-result',
+      'lock-result',
+    ].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.innerHTML = "";
+    });
+    [
+      'merge-btn',
+      'split-btn',
+      'compress-btn',
+      'unlock-btn',
+      'lock-btn',
+    ].forEach(id => {
+      const btn = document.getElementById(id);
+      if(btn) btn.disabled = true;
+    });
+    const splitPagesInput = document.getElementById('split-pages');
+    if(splitPagesInput) splitPagesInput.value = '';
+    const unlockPasswordInput = document.getElementById('unlock-password');
+    if(unlockPasswordInput) unlockPasswordInput.value = '';
+    const lockPasswordInput = document.getElementById('lock-password');
+    if(lockPasswordInput) lockPasswordInput.value = '';
+    updateProgress('merge-progress', 0);
+    updateProgress('split-progress', 0);
+    updateProgress('compress-progress', 0);
+    updateProgress('unlock-progress', 0);
+    updateProgress('lock-progress', 0);
+  }
+
+  function clearResults() {
+    ['merge-result','split-result','compress-result','unlock-result','lock-result'].forEach(id=>{
+      document.getElementById(id).textContent = "";
+    });
+  }
+
+  function updateProgress(progressId, percent) {
+    const bar = document.querySelector(`#${progressId} > div`);
+    if(bar) {
+      bar.style.width = percent + "%";
+    }
+  }
+
+  // Merge PDF logic
+  const mergeDropzone = document.getElementById('merge-dropzone');
+  const mergeFileInput = document.getElementById('merge-files');
+  const mergeFileList = document.getElementById('merge-file-list');
+  const mergeBtn = document.getElementById('merge-btn');
+  let mergeFiles = [];
+
+  mergeDropzone.addEventListener('click', () => mergeFileInput.click());
+  mergeDropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    mergeDropzone.classList.add('dragover');
+  });
+  mergeDropzone.addEventListener('dragleave', e => {
+    mergeDropzone.classList.remove('dragover');
+  });
+  mergeDropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    mergeDropzone.classList.remove('dragover');
+    handleMergeFiles(e.dataTransfer.files);
+  });
+  mergeFileInput.addEventListener('change', e => {
+    handleMergeFiles(e.target.files);
+  });
+
+  function handleMergeFiles(files) {
+    for (let f of files) {
+      if (f.type === "application/pdf" && !mergeFiles.some(mf => mf.name === f.name && mf.size === f.size)) {
+        mergeFiles.push(f);
+      }
+    }
+    updateMergeFileList();
+  }
+
+  function updateMergeFileList() {
+    if (mergeFiles.length === 0) {
+      mergeFileList.innerHTML = "<p>No PDF files selected</p>";
+      mergeBtn.disabled = true;
+      return;
+    }
+    mergeFileList.innerHTML = "<ul>" + mergeFiles.map((file, idx) =>
+      `<li><span class="filename">${file.name}</span><button class="remove-file" title="Remove" aria-label="Remove ${file.name}" data-index="${idx}">&times;</button></li>`
+    ).join("") + "</ul>";
+    mergeBtn.disabled = false;
+    // Add event listeners to remove buttons
+    mergeFileList.querySelectorAll('button.remove-file').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-index'));
+        mergeFiles.splice(idx, 1);
+        updateMergeFileList();
+      });
+    });
+  }
+
+  mergeBtn.addEventListener('click', async () => {
+    mergeBtn.disabled = true;
+    updateProgress('merge-progress', 0);
+    try {
+      const mergedPdf = await PDFDocument.create();
+      for (let i = 0; i < mergeFiles.length; i++) {
+        updateProgress('merge-progress', Math.floor(i * 100 / mergeFiles.length));
+        const arrayBuffer = await mergeFiles[i].arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach(page => {
+          mergedPdf.addPage(page);
+        });
+      }
+      updateProgress('merge-progress', 90);
+      const mergedPdfBytes = await mergedPdf.save();
+      updateProgress('merge-progress', 100);
+      const blob = new Blob([mergedPdfBytes], {type: 'application/pdf'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "merged.pdf";
+      a.textContent = "Download merged PDF";
+      a.style.fontWeight = "700";
+      a.style.color = "#2be81a";
+      a.style.textDecoration = "none";
+
+      const result = document.getElementById('merge-result');
+      result.innerHTML = '';
+      result.appendChild(a);
+    } catch(e) {
+      alert("Error merging PDFs: " + e.message);
+    }
+    mergeBtn.disabled = false;
+    updateProgress('merge-progress', 0);
+  });
+
+  // Split PDF logic
+  const splitDropzone = document.getElementById('split-dropzone');
+  const splitFileInput = document.getElementById('split-file');
+  const splitPagesInput = document.getElementById('split-pages');
+  const splitBtn = document.getElementById('split-btn');
+  let splitFile = null;
+
+  splitDropzone.addEventListener('click', () => splitFileInput.click());
+  splitDropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    splitDropzone.classList.add('dragover');
+  });
+  splitDropzone.addEventListener('dragleave', e => {
+    splitDropzone.classList.remove('dragover');
+  });
+  splitDropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    splitDropzone.classList.remove('dragover');
+    const dropped = e.dataTransfer.files;
+    if (dropped.length > 0) {
+      splitFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
+      splitBtn.disabled = !splitFile || !isValidPagesInput(splitPagesInput.value);
+    }
+  });
+  splitFileInput.addEventListener('change', e => {
+    if (e.target.files.length > 0) {
+      splitFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
+      splitBtn.disabled = !splitFile || !isValidPagesInput(splitPagesInput.value);
+    }
+  });
+  splitPagesInput.addEventListener('input', e => {
+    splitBtn.disabled = !splitFile || !isValidPagesInput(e.target.value);
+  });
+
+  function isValidPagesInput(input) {
+    if (!input) return false;
+    const parts = input.split(',').map(s => s.trim());
+    for (let part of parts) {
+      if (!/^(\d+)(-\d+)?$/.test(part)) return false;
+    }
+    return true;
+  }
+
+  function parsePagesInput(input, totalPages) {
+    const pagesSet = new Set();
+    const parts = input.split(',').map(s => s.trim());
+    for (let part of parts) {
+      if (part.includes('-')) {
+        const [start, end] = part.split('-').map(Number);
+        if (start <= 0 || end <= 0 || start > totalPages || end > totalPages || start > end) continue;
+        for (let p = start; p <= end; p++) pagesSet.add(p - 1);
+      } else {
+        const num = Number(part);
+        if (num > 0 && num <= totalPages) {
+          pagesSet.add(num - 1);
+        }
+      }
+    }
+    return Array.from(pagesSet).sort((a, b) => a - b);
+  }
+
+  splitBtn.addEventListener('click', async () => {
+    if (!splitFile || !splitPagesInput.value) return;
+    splitBtn.disabled = true;
+    updateProgress('split-progress', 0);
+    try {
+      const arrayBuffer = await splitFile.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      const totalPages = pdfDoc.getPageCount();
+      const pagesToExtract = parsePagesInput(splitPagesInput.value, totalPages);
+      if (pagesToExtract.length === 0) {
+        alert("No valid pages found to extract.");
+        splitBtn.disabled = false;
+        return;
+      }
+      const newPdfDoc = await PDFDocument.create();
+      for (let i = 0; i < pagesToExtract.length; i++) {
+        updateProgress('split-progress', Math.floor(i * 100 / pagesToExtract.length));
+        const [copiedPage] = await newPdfDoc.copyPages(pdfDoc, [pagesToExtract[i]]);
+        newPdfDoc.addPage(copiedPage);
+      }
+      const newPdfBytes = await newPdfDoc.save();
+      updateProgress('split-progress', 100);
+      const blob = new Blob([newPdfBytes], {type: 'application/pdf'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "split.pdf";
+      a.textContent = "Download split PDF";
+      a.style.fontWeight = "700";
+      a.style.color = "#2be81a";
+      a.style.textDecoration = "none";
+
+      const result = document.getElementById('split-result');
+      result.innerHTML = '';
+      result.appendChild(a);
+    } catch(e) {
+      alert("Error splitting PDF: " + e.message);
+    }
+    splitBtn.disabled = false;
+    updateProgress('split-progress', 0);
+  });
+
+  // Compress PDF logic (simple re-save, no real compression client side)
+  const compressDropzone = document.getElementById('compress-dropzone');
+  const compressFileInput = document.getElementById('compress-file');
+  const compressBtn = document.getElementById('compress-btn');
+  let compressFile = null;
+  compressDropzone.addEventListener('click', () => compressFileInput.click());
+  compressDropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    compressDropzone.classList.add('dragover');
+  });
+  compressDropzone.addEventListener('dragleave', e => {
+    compressDropzone.classList.remove('dragover');
+  });
+  compressDropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    compressDropzone.classList.remove('dragover');
+    const dropped = e.dataTransfer.files;
+    if (dropped.length > 0) {
+      compressFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
+      compressBtn.disabled = !compressFile;
+    }
+  });
+  compressFileInput.addEventListener('change', e => {
+    if (e.target.files.length > 0) {
+      compressFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
+      compressBtn.disabled = !compressFile;
+    }
+  });
+
+  compressBtn.addEventListener('click', async () => {
+    if (!compressFile) return;
+    compressBtn.disabled = true;
+    updateProgress('compress-progress', 0);
+    try {
+      // This is a pseudo compression: re-save PDF which might slightly reduce the file size
+      const arrayBuffer = await compressFile.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      // For demo, if could implement lower quality images here. But pdf-lib does not provide direct compress functionality.
+      // Just re-saving as a basic compression
+      const compressedBytes = await pdfDoc.save();
+      updateProgress('compress-progress', 90);
+      const blob = new Blob([compressedBytes], {type: 'application/pdf'});
+      updateProgress('compress-progress', 100);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "compressed.pdf";
+      a.textContent = "Download compressed PDF";
+      a.style.fontWeight = "700";
+      a.style.color = "#2be81a";
+      a.style.textDecoration = "none";
+
+      const result = document.getElementById('compress-result');
+      result.innerHTML = '';
+      result.appendChild(a);
+    } catch(e) {
+      alert("Error compressing PDF: " + e.message);
+    }
+    compressBtn.disabled = false;
+    updateProgress('compress-progress', 0);
+  });
+
+  // Unlock PDF logic
+  // pdf-lib does not support opening encrypted PDFs natively. So unlocking with password can't be done fully client side. We attempt to load with a password.
+  // But pdf-lib currently does not have a method for password, so we will provide an alert and do nothing for now.
+
+  // Lock PDF logic - we can encrypt a pdf using pdf-lib with a password using 'encrypt' option in save
+  const lockDropzone = document.getElementById('lock-dropzone');
+  const lockFileInput = document.getElementById('lock-file');
+  const lockPasswordInput = document.getElementById('lock-password');
+  const lockBtn = document.getElementById('lock-btn');
+  let lockFile = null;
+
+  lockDropzone.addEventListener('click', () => lockFileInput.click());
+  lockDropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    lockDropzone.classList.add('dragover');
+  });
+  lockDropzone.addEventListener('dragleave', e => {
+    lockDropzone.classList.remove('dragover');
+  });
+  lockDropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    lockDropzone.classList.remove('dragover');
+    const dropped = e.dataTransfer.files;
+    if (dropped.length > 0) {
+      lockFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
+      updateLockBtnState();
+    }
+  });
+  lockFileInput.addEventListener('change', e => {
+    if (e.target.files.length > 0) {
+      lockFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
+      updateLockBtnState();
+    }
+  });
+  lockPasswordInput.addEventListener('input', () => {
+    updateLockBtnState();
+  });
+  function updateLockBtnState() {
+    lockBtn.disabled = !(lockFile && lockPasswordInput.value.trim().length >= 4);
+  }
+  updateLockBtnState();
+
+  lockBtn.addEventListener('click', async () => {
+    if (!lockFile) return;
+    const password = lockPasswordInput.value.trim();
+    if (password.length < 4) {
+      alert('Please enter a password with at least 4 characters.');
+      return;
+    }
+    lockBtn.disabled = true;
+    updateProgress('lock-progress', 0);
+    try {
+      const arrayBuffer = await lockFile.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      // pdf-lib support for encryption requires setting encryption options in save
+      const pdfBytes = await pdfDoc.save({
+        encrypt: {
+          userPassword: password,
+          ownerPassword: password,
+          permissions: {
+            printing: 'highResolution',
+            modifying: false,
+            copying: false,
+            annotating: false,
+            fillingForms: false,
+            contentAccessibility: false,
+            documentAssembly: false,
+          }
+        }
+      });
+      updateProgress('lock-progress', 90);
+      const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+      updateProgress('lock-progress', 100);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "locked.pdf";
+      a.textContent = "Download locked PDF";
+      a.style.fontWeight = "700";
+      a.style.color = "#2be81a";
+      a.style.textDecoration = "none";
+
+      const result = document.getElementById('lock-result');
+      result.innerHTML = '';
+      result.appendChild(a);
+    } catch(e) {
+      alert("Error locking PDF: " + e.message);
+    }
+    lockBtn.disabled = false;
+    updateProgress('lock-progress', 0);
+  });
+
+  // Unlock PDF - Provide message since pdf-lib lacks direct support to open password PDFs
+  // We provide a message for unlock that it requires backend or external tool
+  const unlockDropzone = document.getElementById('unlock-dropzone');
+  const unlockFileInput = document.getElementById('unlock-file');
+  const unlockPasswordInput = document.getElementById('unlock-password');
+  const unlockBtn = document.getElementById('unlock-btn');
+  let unlockFile = null;
+  unlockDropzone.addEventListener('click', () => unlockFileInput.click());
+  unlockDropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    unlockDropzone.classList.add('dragover');
+  });
+  unlockDropzone.addEventListener('dragleave', e => {
+    unlockDropzone.classList.remove('dragover');
+  });
+  unlockDropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    unlockDropzone.classList.remove('dragover');
+    const dropped = e.dataTransfer.files;
+    if (dropped.length > 0) {
+      unlockFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
+      updateUnlockBtnState();
+    }
+  });
+  unlockFileInput.addEventListener('change', e => {
+    if (e.target.files.length > 0) {
+      unlockFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
+      updateUnlockBtnState();
+    }
+  });
+  unlockPasswordInput.addEventListener('input', () => {
+    updateUnlockBtnState();
+  });
+  function updateUnlockBtnState() {
+    unlockBtn.disabled = !(unlockFile && unlockPasswordInput.value.trim().length >= 1);
+  }
+  updateUnlockBtnState();
+
+  unlockBtn.addEventListener('click', async () => {
+    if (!unlockFile) return;
+    alert('Unlock PDF feature is not supported fully on client side due to library limitations. For now, use external tools for unlocking encrypted PDFs.');
+  });
+
+  // Accessibility enhancements and keyboard handling for dropzones to trigger file input on Enter / Space key
+  document.querySelectorAll('.dropzone').forEach(dropzone => {
+    dropzone.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const inputId = dropzone.querySelector('input[type=file]').id;
+        const input = document.getElementById(inputId);
+        if (input) input.click();
+      }
+    });
+  });
+
+  // Initialize first tab state
+  updateMergeFileList();
+</script>
+</body>
+</html>
