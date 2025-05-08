@@ -25,7 +25,7 @@
     flex-direction: column;
   }
   header {
-    background-color: #2be81a;
+    background-color: #1a73e8;
     color: white;
     padding: 15px 20px;
     font-size: 1.4rem;
@@ -55,11 +55,11 @@
     white-space: nowrap;
   }
   nav button.active {
-    color: #2be81a;
-    border-bottom: 3px solid #2be81a;
+    color: #1a73e8;
+    border-bottom: 3px solid #1a73e8;
   }
   nav button:hover:not(.active) {
-    color: #2be81a;
+    color: #1a73e8;
   }
   main {
     flex-grow: 1;
@@ -70,13 +70,13 @@
 
   /* Common file dropzone style */
   .dropzone {
-    margin: 20px auto 30px;
-    border: 3px dashed #2be81a;
+    margin: 20px auto 20px;
+    border: 3px dashed #1a73e8;
     border-radius: 10px;
     padding: 30px 15px;
     max-width: 500px;
     text-align: center;
-    color: #2be81a;
+    color: #1a73e8;
     font-weight: 700;
     cursor: pointer;
     user-select: none;
@@ -89,7 +89,7 @@
     display: none;
   }
   button.primary {
-    background-color: #2be81a;
+    background-color: #1a73e8;
     color: white;
     font-weight: 700;
     padding: 12px 20px;
@@ -97,17 +97,17 @@
     margin-top: 15px;
     border: none;
     border-radius: 7px;
-    box-shadow: 0 6px 10px rgba(40, 232, 26, 0.35);
+    box-shadow: 0 6px 10px rgb(26 115 232 / 0.35);
     cursor: pointer;
     transition: background-color 0.3s ease;
     user-select: none;
   }
   button.primary:disabled {
-    background-color: #aaf7b8;
+    background-color: #aac6f7;
     cursor: not-allowed;
   }
   button.primary:hover:not(:disabled) {
-    background-color: #2be81a;
+    background-color: #165ec9;
   }
   .files-list {
     max-width: 500px;
@@ -157,8 +157,8 @@
     padding: 10px;
     margin-top: 10px;
     border-radius: 7px;
-    border: 1.8px solid #2be81a;
-    color: #2be81a;
+    border: 1.8px solid #1a73e8;
+    color: #1a73e8;
   }
 
   /* Progress bar */
@@ -173,7 +173,7 @@
   }
   .progress-bar > div {
     height: 100%;
-    background-color: #2be81a;
+    background-color: #1a73e8;
     width: 0%;
     transition: width 0.3s ease;
   }
@@ -185,7 +185,7 @@
     text-align: center;
   }
   .result a {
-    color: #2be81a;
+    color: #1a73e8;
     font-weight: 700;
     text-decoration: none;
     font-size: 1.1rem;
@@ -200,6 +200,23 @@
     color: #999;
   }
 
+  /* PDF preview container */
+  .pdf-preview {
+    margin: 10px auto 20px;
+    max-width: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .pdf-preview canvas {
+    border: 1.5px solid #1a73e8;
+    border-radius: 5px;
+    max-width: 120px;
+    max-height: 150px;
+    box-shadow: 0 2px 7px rgba(26, 115, 232, 0.25);
+  }
+
   /* Responsive and mobile */
   @media (max-width: 460px) {
     nav button {
@@ -211,7 +228,7 @@
       max-height: calc(100vh - 104px);
     }
     .dropzone {
-      margin: 15px auto 25px;
+      margin: 15px auto 15px;
       padding: 25px 12px;
     }
     .files-list {
@@ -223,120 +240,195 @@
     .result {
       max-width: 100%;
     }
+    .pdf-preview canvas {
+      max-width: 45vw;
+      max-height: 70vw;
+    }
   }
 </style>
 </head>
 <body>
 <header>PDF Wallah</header>
 <nav aria-label="PDF tools navigation">
-  <button class="active" data-tool="merge" aria-selected="true">Merge PDF</button>
-  <button data-tool="split" aria-selected="false">Split PDF</button>
-  <button data-tool="compress" aria-selected="false">Compress PDF</button>
-  <button data-tool="unlock" aria-selected="false">Unlock PDF</button>
-  <button data-tool="lock" aria-selected="false">Lock PDF</button>
-  <button data-tool="pdf2word" aria-selected="false">PDF to Word</button>
-  <button data-tool="word2pdf" aria-selected="false">Word to PDF</button>
-  <button data-tool="pdf2ppt" aria-selected="false">PDF to PowerPoint</button>
-  <button data-tool="ppt2pdf" aria-selected="false">PowerPoint to PDF</button>
-  <button data-tool="pdf2excel" aria-selected="false">PDF to Excel</button>
-  <button data-tool="excel2pdf" aria-selected="false">Excel to PDF</button>
+ <button class="active" data-tool="merge" aria-selected="true">Merge PDF</button>
+ <button data-tool="split" aria-selected="false">Split PDF</button>
+ <button data-tool="compress" aria-selected="false">Compress PDF</button>
+ <button data-tool="unlock" aria-selected="false">Unlock PDF</button>
+ <button data-tool="lock" aria-selected="false">Lock PDF</button>
+ <button data-tool="pdf2word" aria-selected="false">PDF to Word</button>
+ <button data-tool="word2pdf" aria-selected="false">Word to PDF</button>
+ <button data-tool="pdf2ppt" aria-selected="false">PDF to PowerPoint</button>
+ <button data-tool="ppt2pdf" aria-selected="false">PowerPoint to PDF</button>
+ <button data-tool="pdf2excel" aria-selected="false">PDF to Excel</button>
+ <button data-tool="excel2pdf" aria-selected="false">Excel to PDF</button>
 </nav>
 <main>
-  <section id="merge" class="tool-section" aria-label="Merge PDF tool">
-    <div class="dropzone" tabindex="0" aria-label="Drop PDF files here or click to select files" id="merge-dropzone">
+<section id="merge" class="tool-section" aria-label="Merge PDF tool">
+   <div class="dropzone" tabindex="0" aria-label="Drop PDF files here or click to select files" id="merge-dropzone">
       Drop PDF files here or click to select files
-      <input type="file" id="merge-files" accept="application/pdf" multiple aria-hidden="true" />
-    </div>
-    <div class="files-list" id="merge-file-list" aria-live="polite" aria-relevant="additions removals"></div>
-    <button class="primary" id="merge-btn" disabled>Merge PDFs</button>
-    <div class="progress-bar" id="merge-progress" aria-hidden="true"><div></div></div>
-    <div class="result" id="merge-result" aria-live="polite"></div>
-  </section>
+     <input type="file" id="merge-files" accept="application/pdf" multiple aria-hidden="true" />
+   </div>
+   <div class="files-list" id="merge-file-list" aria-live="polite" aria-relevant="additions removals"></div>
+   <div class="pdf-preview" id="merge-pdf-preview" aria-label="PDF preview area"></div>
+   <button class="primary" id="merge-btn" disabled>Merge PDFs</button>
+   <div class="progress-bar" id="merge-progress" aria-hidden="true"><div></div></div>
+   <div class="result" id="merge-result" aria-live="polite"></div>
+</section>
 
-  <section id="split" class="tool-section" style="display:none" aria-label="Split PDF tool">
-    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="split-dropzone">
+ <section id="split" class="tool-section" style="display:none" aria-label="Split PDF tool">
+   <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="split-dropzone">
       Drop a PDF file here or click to select file
-      <input type="file" id="split-file" accept="application/pdf" aria-hidden="true" />
-    </div>
-    <label for="split-pages" style="font-weight:600; color:#2be81a;">Enter pages or page ranges to extract (e.g. 1,3-5):</label>
-    <textarea id="split-pages" class="textarea-split-pages" placeholder="1,3-5"></textarea>
-    <button class="primary" id="split-btn" disabled>Split PDF</button>
-    <div class="progress-bar" id="split-progress" aria-hidden="true"><div></div></div>
-    <div class="result" id="split-result" aria-live="polite"></div>
-  </section>
+     <input type="file" id="split-file" accept="application/pdf" aria-hidden="true" />
+   </div>
+   <div class="pdf-preview" id="split-pdf-preview" aria-label="PDF preview area"></div>
+   <label for="split-pages" style="font-weight:600; color:#1a73e8;">Enter pages or page ranges to extract (e.g. 1,3-5):</label>
+   <textarea id="split-pages" class="textarea-split-pages" placeholder="1,3-5"></textarea>
+   <button class="primary" id="split-btn" disabled>Split PDF</button>
+   <div class="progress-bar" id="split-progress" aria-hidden="true"><div></div></div>
+   <div class="result" id="split-result" aria-live="polite"></div>
+</section>
 
-  <section id="compress" class="tool-section" style="display:none" aria-label="Compress PDF tool">
-    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="compress-dropzone">
+ <section id="compress" class="tool-section" style="display:none" aria-label="Compress PDF tool">
+   <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="compress-dropzone">
       Drop a PDF file here or click to select file
-      <input type="file" id="compress-file" accept="application/pdf" aria-hidden="true" />
-    </div>
-    <button class="primary" id="compress-btn" disabled>Compress PDF</button>
-    <div class="progress-bar" id="compress-progress" aria-hidden="true"><div></div></div>
-    <div class="result" id="compress-result" aria-live="polite"></div>
-  </section>
+     <input type="file" id="compress-file" accept="application/pdf" aria-hidden="true" />
+   </div>
+   <div class="pdf-preview" id="compress-pdf-preview" aria-label="PDF preview area"></div>
+   <button class="primary" id="compress-btn" disabled>Compress PDF</button>
+   <div class="progress-bar" id="compress-progress" aria-hidden="true"><div></div></div>
+   <div class="result" id="compress-result" aria-live="polite"></div>
+</section>
 
-  <section id="unlock" class="tool-section" style="display:none" aria-label="Unlock PDF tool">
-    <div class="dropzone" tabindex="0" aria-label="Drop an encrypted PDF here or click to select file" id="unlock-dropzone">
+ <section id="unlock" class="tool-section" style="display:none" aria-label="Unlock PDF tool">
+   <div class="dropzone" tabindex="0" aria-label="Drop an encrypted PDF here or click to select file" id="unlock-dropzone">
       Drop an encrypted PDF here or click to select file
-      <input type="file" id="unlock-file" accept="application/pdf" aria-hidden="true" />
-    </div>
-    <label for="unlock-password" style="font-weight:600; color:#2be81a;">Enter PDF password:</label>
-    <input type="password" id="unlock-password" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 7px; border: 1.5px solid #2be81a; font-size: 1rem;" aria-describedby="unlock-password-desc" />
-    <div id="unlock-password-desc" style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Password used to unlock the PDF file</div>
-    <button class="primary" id="unlock-btn" disabled>Unlock PDF</button>
-    <div class="progress-bar" id="unlock-progress" aria-hidden="true"><div></div></div>
-    <div class="result" id="unlock-result" aria-live="polite"></div>
-  </section>
+     <input type="file" id="unlock-file" accept="application/pdf" aria-hidden="true" />
+   </div>
+   <div class="pdf-preview" id="unlock-pdf-preview" aria-label="PDF preview area"></div>
+   <label for="unlock-password" style="font-weight:600; color:#1a73e8;">Enter PDF password</label>
+   <input type="password" id="unlock-password" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 7px; border: 1.5px solid #1a73e8; font-size: 1rem;" aria-describedby="unlock-password-desc" />
+   <div id="unlock-password-desc" style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Password used to unlock the PDF file</div>
+   <button class="primary" id="unlock-btn" disabled>Unlock PDF</button>
+   <div class="progress-bar" id="unlock-progress" aria-hidden="true"><div></div></div>
+   <div class="result" id="unlock-result" aria-live="polite"></div>
+</section>
 
-  <section id="lock" class="tool-section" style="display:none" aria-label="Lock PDF tool">
-    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="lock-dropzone">
+ <section id="lock" class="tool-section" style="display:none" aria-label="Lock PDF tool">
+   <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="lock-dropzone">
       Drop a PDF file here or click to select file
-      <input type="file" id="lock-file" accept="application/pdf" aria-hidden="true" />
-    </div>
-    <label for="lock-password" style="font-weight:600; color:#2be81a;">Enter password to lock PDF:</label>
-    <input type="password" id="lock-password" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 7px; border: 1.5px solid #2be81a; font-size: 1rem;" aria-describedby="lock-password-desc" />
-    <div id="lock-password-desc" style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Password will be used to encrypt the PDF file</div>
-    <button class="primary" id="lock-btn" disabled>Lock PDF</button>
-    <div class="progress-bar" id="lock-progress" aria-hidden="true"><div></div></div>
-    <div class="result" id="lock-result" aria-live="polite"></div>
-  </section>
+     <input type="file" id="lock-file" accept="application/pdf" aria-hidden="true" />
+   </div>
+   <div class="pdf-preview" id="lock-pdf-preview" aria-label="PDF preview area"></div>
+   <label for="lock-password" style="font-weight:600; color:#1a73e8;">Enter password to lock PDF</label>
+   <input type="password" id="lock-password" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 7px; border: 1.5px solid #1a73e8; font-size: 1rem;" aria-describedby="lock-password-desc" />
+   <div id="lock-password-desc" style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Password will be used to encrypt the PDF file</div>
+   <button class="primary" id="lock-btn" disabled>Lock PDF</button>
+   <div class="progress-bar" id="lock-progress" aria-hidden="true"><div></div></div>
+   <div class="result" id="lock-result" aria-live="polite"></div>
+</section>
 
-  <!-- For other tools, show a simple coming soon message -->
-  <section id="pdf2word" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
-    <h2>PDF to Word</h2>
-    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
-  </section>
-  <section id="word2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
-    <h2>Word to PDF</h2>
-    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
-  </section>
-  <section id="pdf2ppt" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
-    <h2>PDF to PowerPoint</h2>
-    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
-  </section>
-  <section id="ppt2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
-    <h2>PowerPoint to PDF</h2>
-    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
-  </section>
-  <section id="pdf2excel" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
-    <h2>PDF to Excel</h2>
-    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
-  </section>
-  <section id="excel2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
-    <h2>Excel to PDF</h2>
-    <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
-  </section>
+ <!-- For other tools, show a simple coming soon message -->
+ <section id="pdf2word" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+   <h2>PDF to Word</h2>
+   <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+ </section>
+ <section id="word2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+   <h2>Word to PDF</h2>
+   <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+ </section>
+ <section id="pdf2ppt" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+   <h2>PDF to PowerPoint</h2>
+   <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+ </section>
+ <section id="ppt2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+   <h2>PowerPoint to PDF</h2>
+   <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+ </section>
+ <section id="pdf2excel" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+   <h2>PDF to Excel</h2>
+   <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+ </section>
+ <section id="excel2pdf" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
+   <h2>Excel to PDF</h2>
+   <p>Coming soon. This feature requires advanced file conversions beyond client-only capabilities.</p>
+ </section>
 </main>
 <div class="footer" role="contentinfo">
   &copy; 2024 PDF Wallah - All tools for free, client-side processing.
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script>
   const {
     PDFDocument,
-    StandardFonts,
   } = PDFLib;
+
+  // PDF.js setup for rendering previews
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
+
+  async function renderPDFPreview(containerId, file) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (!file || file.type !== 'application/pdf') return;
+
+    const fileReader = new FileReader();
+    fileReader.onload = async function() {
+      const typedarray = new Uint8Array(this.result);
+      try {
+        const pdfDoc = await pdfjsLib.getDocument({data: typedarray}).promise;
+        // Render first 2 pages or all if less than 2
+        const pagesToRender = Math.min(pdfDoc.numPages, 2);
+        for (let pageNum = 1; pageNum <= pagesToRender; pageNum++) {
+          const page = await pdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({scale: 1.2});
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const context = canvas.getContext('2d');
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          await page.render(renderContext).promise;
+          container.appendChild(canvas);
+        }
+      } catch(e) {
+        container.innerHTML = '<p style="color:#e74c3c;">Error previewing PDF.</p>';
+      }
+    };
+    fileReader.readAsArrayBuffer(file);
+  }
+
+  async function renderMultiplePDFPreviews(containerId, files) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    for (const file of files) {
+      if (file.type !== 'application/pdf') continue;
+      const fileReader = new FileReader();
+      fileReader.onload = async function() {
+        const typedarray = new Uint8Array(this.result);
+        try {
+          const pdfDoc = await pdfjsLib.getDocument({data: typedarray}).promise;
+          const page = await pdfDoc.getPage(1);
+          const viewport = page.getViewport({scale: 0.6});
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const context = canvas.getContext('2d');
+          const renderContext = {canvasContext: context, viewport: viewport};
+          await page.render(renderContext).promise;
+          canvas.title = file.name;
+          container.appendChild(canvas);
+        } catch(e) {
+          // Ignore preview error, could add placeholder canvas with error text
+        }
+      };
+      fileReader.readAsArrayBuffer(file);
+      // Awaiting inside loop to maintain order and prevent race condition
+      await new Promise(res => fileReader.onloadend = res);
+    }
+  }
 
   // Navigation tabs logic
   const navButtons = document.querySelectorAll("nav button");
@@ -411,11 +503,19 @@
     updateProgress('compress-progress', 0);
     updateProgress('unlock-progress', 0);
     updateProgress('lock-progress', 0);
+    clearPDFPreviews();
   }
 
   function clearResults() {
     ['merge-result','split-result','compress-result','unlock-result','lock-result'].forEach(id=>{
       document.getElementById(id).textContent = "";
+    });
+  }
+
+  function clearPDFPreviews() {
+    ['merge-pdf-preview','split-pdf-preview','compress-pdf-preview','unlock-pdf-preview','lock-pdf-preview'].forEach(id=>{
+      const container = document.getElementById(id);
+      if(container) container.innerHTML = "";
     });
   }
 
@@ -430,6 +530,7 @@
   const mergeDropzone = document.getElementById('merge-dropzone');
   const mergeFileInput = document.getElementById('merge-files');
   const mergeFileList = document.getElementById('merge-file-list');
+  const mergePdfPreview = document.getElementById('merge-pdf-preview');
   const mergeBtn = document.getElementById('merge-btn');
   let mergeFiles = [];
 
@@ -457,16 +558,18 @@
       }
     }
     updateMergeFileList();
+    renderMultiplePDFPreviews('merge-pdf-preview', mergeFiles);
   }
 
   function updateMergeFileList() {
     if (mergeFiles.length === 0) {
       mergeFileList.innerHTML = "<p>No PDF files selected</p>";
       mergeBtn.disabled = true;
+      mergePdfPreview.innerHTML = '';
       return;
     }
     mergeFileList.innerHTML = "<ul>" + mergeFiles.map((file, idx) =>
-      `<li><span class="filename">${file.name}</span><button class="remove-file" title="Remove" aria-label="Remove ${file.name}" data-index="${idx}">&times;</button></li>`
+     `<li><span class="filename" title="${file.name}">${file.name}</span><button class="remove-file" title="Remove" aria-label="Remove ${file.name}" data-index="${idx}">&times;</button></li>`
     ).join("") + "</ul>";
     mergeBtn.disabled = false;
     // Add event listeners to remove buttons
@@ -475,6 +578,7 @@
         const idx = parseInt(btn.getAttribute('data-index'));
         mergeFiles.splice(idx, 1);
         updateMergeFileList();
+        renderMultiplePDFPreviews('merge-pdf-preview', mergeFiles);
       });
     });
   }
@@ -484,7 +588,7 @@
     updateProgress('merge-progress', 0);
     try {
       const mergedPdf = await PDFDocument.create();
-      for (let i = 0; i < mergeFiles.length; i++) {
+      for (let i = 0; i< mergeFiles.length; i++) {
         updateProgress('merge-progress', Math.floor(i * 100 / mergeFiles.length));
         const arrayBuffer = await mergeFiles[i].arrayBuffer();
         const pdf = await PDFDocument.load(arrayBuffer);
@@ -503,7 +607,7 @@
       a.download = "merged.pdf";
       a.textContent = "Download merged PDF";
       a.style.fontWeight = "700";
-      a.style.color = "#2be81a";
+      a.style.color = "#1a73e8";
       a.style.textDecoration = "none";
 
       const result = document.getElementById('merge-result');
@@ -519,6 +623,7 @@
   // Split PDF logic
   const splitDropzone = document.getElementById('split-dropzone');
   const splitFileInput = document.getElementById('split-file');
+  const splitPdfPreview = document.getElementById('split-pdf-preview');
   const splitPagesInput = document.getElementById('split-pages');
   const splitBtn = document.getElementById('split-btn');
   let splitFile = null;
@@ -538,12 +643,14 @@
     if (dropped.length > 0) {
       splitFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
       splitBtn.disabled = !splitFile || !isValidPagesInput(splitPagesInput.value);
+      renderPDFPreview('split-pdf-preview', splitFile);
     }
   });
   splitFileInput.addEventListener('change', e => {
     if (e.target.files.length > 0) {
       splitFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
       splitBtn.disabled = !splitFile || !isValidPagesInput(splitPagesInput.value);
+      renderPDFPreview('split-pdf-preview', splitFile);
     }
   });
   splitPagesInput.addEventListener('input', e => {
@@ -565,11 +672,11 @@
     for (let part of parts) {
       if (part.includes('-')) {
         const [start, end] = part.split('-').map(Number);
-        if (start <= 0 || end <= 0 || start > totalPages || end > totalPages || start > end) continue;
-        for (let p = start; p <= end; p++) pagesSet.add(p - 1);
+        if (start<= 0 || end<= 0 || start > totalPages || end > totalPages || start > end) continue;
+        for (let p = start; p<= end; p++) pagesSet.add(p - 1);
       } else {
         const num = Number(part);
-        if (num > 0 && num <= totalPages) {
+        if (num > 0 && num<= totalPages) {
           pagesSet.add(num - 1);
         }
       }
@@ -592,7 +699,7 @@
         return;
       }
       const newPdfDoc = await PDFDocument.create();
-      for (let i = 0; i < pagesToExtract.length; i++) {
+      for (let i = 0; i< pagesToExtract.length; i++) {
         updateProgress('split-progress', Math.floor(i * 100 / pagesToExtract.length));
         const [copiedPage] = await newPdfDoc.copyPages(pdfDoc, [pagesToExtract[i]]);
         newPdfDoc.addPage(copiedPage);
@@ -606,7 +713,7 @@
       a.download = "split.pdf";
       a.textContent = "Download split PDF";
       a.style.fontWeight = "700";
-      a.style.color = "#2be81a";
+      a.style.color = "#1a73e8";
       a.style.textDecoration = "none";
 
       const result = document.getElementById('split-result');
@@ -622,6 +729,7 @@
   // Compress PDF logic (simple re-save, no real compression client side)
   const compressDropzone = document.getElementById('compress-dropzone');
   const compressFileInput = document.getElementById('compress-file');
+  const compressPdfPreview = document.getElementById('compress-pdf-preview');
   const compressBtn = document.getElementById('compress-btn');
   let compressFile = null;
   compressDropzone.addEventListener('click', () => compressFileInput.click());
@@ -639,12 +747,14 @@
     if (dropped.length > 0) {
       compressFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
       compressBtn.disabled = !compressFile;
+      renderPDFPreview('compress-pdf-preview', compressFile);
     }
   });
   compressFileInput.addEventListener('change', e => {
     if (e.target.files.length > 0) {
       compressFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
       compressBtn.disabled = !compressFile;
+      renderPDFPreview('compress-pdf-preview', compressFile);
     }
   });
 
@@ -668,7 +778,7 @@
       a.download = "compressed.pdf";
       a.textContent = "Download compressed PDF";
       a.style.fontWeight = "700";
-      a.style.color = "#2be81a";
+      a.style.color = "#1a73e8";
       a.style.textDecoration = "none";
 
       const result = document.getElementById('compress-result');
@@ -681,13 +791,56 @@
     updateProgress('compress-progress', 0);
   });
 
-  // Unlock PDF logic
-  // pdf-lib does not support opening encrypted PDFs natively. So unlocking with password can't be done fully client side. We attempt to load with a password.
-  // But pdf-lib currently does not have a method for password, so we will provide an alert and do nothing for now.
+  // Unlock PDF logic - PDF.js cannot open encrypted PDFs without password, pdf-lib can't open password protected PDFs fully client side
+  // We'll show previews but unlocking functionality limited to message.
+  const unlockDropzone = document.getElementById('unlock-dropzone');
+  const unlockFileInput = document.getElementById('unlock-file');
+  const unlockPdfPreview = document.getElementById('unlock-pdf-preview');
+  const unlockPasswordInput = document.getElementById('unlock-password');
+  const unlockBtn = document.getElementById('unlock-btn');
+  let unlockFile = null;
+  unlockDropzone.addEventListener('click', () => unlockFileInput.click());
+  unlockDropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    unlockDropzone.classList.add('dragover');
+  });
+  unlockDropzone.addEventListener('dragleave', e => {
+    unlockDropzone.classList.remove('dragover');
+  });
+  unlockDropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    unlockDropzone.classList.remove('dragover');
+    const dropped = e.dataTransfer.files;
+    if (dropped.length > 0) {
+      unlockFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
+      updateUnlockBtnState();
+      renderPDFPreview('unlock-pdf-preview', unlockFile);
+    }
+  });
+  unlockFileInput.addEventListener('change', e => {
+    if (e.target.files.length > 0) {
+      unlockFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
+      updateUnlockBtnState();
+      renderPDFPreview('unlock-pdf-preview', unlockFile);
+    }
+  });
+  unlockPasswordInput.addEventListener('input', () => {
+    updateUnlockBtnState();
+  });
+  function updateUnlockBtnState() {
+    unlockBtn.disabled = !(unlockFile && unlockPasswordInput.value.trim().length >= 1);
+  }
+  updateUnlockBtnState();
+
+  unlockBtn.addEventListener('click', async () => {
+    if (!unlockFile) return;
+    alert('Unlock PDF feature is not supported fully on client side due to library limitations. For now, use external tools for unlocking encrypted PDFs.');
+  });
 
   // Lock PDF logic - we can encrypt a pdf using pdf-lib with a password using 'encrypt' option in save
   const lockDropzone = document.getElementById('lock-dropzone');
   const lockFileInput = document.getElementById('lock-file');
+  const lockPdfPreview = document.getElementById('lock-pdf-preview');
   const lockPasswordInput = document.getElementById('lock-password');
   const lockBtn = document.getElementById('lock-btn');
   let lockFile = null;
@@ -707,12 +860,14 @@
     if (dropped.length > 0) {
       lockFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
       updateLockBtnState();
+      renderPDFPreview('lock-pdf-preview', lockFile);
     }
   });
   lockFileInput.addEventListener('change', e => {
     if (e.target.files.length > 0) {
       lockFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
       updateLockBtnState();
+      renderPDFPreview('lock-pdf-preview', lockFile);
     }
   });
   lockPasswordInput.addEventListener('input', () => {
@@ -726,7 +881,7 @@
   lockBtn.addEventListener('click', async () => {
     if (!lockFile) return;
     const password = lockPasswordInput.value.trim();
-    if (password.length < 4) {
+    if (password.length< 4) {
       alert('Please enter a password with at least 4 characters.');
       return;
     }
@@ -760,7 +915,7 @@
       a.download = "locked.pdf";
       a.textContent = "Download locked PDF";
       a.style.fontWeight = "700";
-      a.style.color = "#2be81a";
+      a.style.color = "#1a73e8";
       a.style.textDecoration = "none";
 
       const result = document.getElementById('lock-result');
@@ -771,49 +926,6 @@
     }
     lockBtn.disabled = false;
     updateProgress('lock-progress', 0);
-  });
-
-  // Unlock PDF - Provide message since pdf-lib lacks direct support to open password PDFs
-  // We provide a message for unlock that it requires backend or external tool
-  const unlockDropzone = document.getElementById('unlock-dropzone');
-  const unlockFileInput = document.getElementById('unlock-file');
-  const unlockPasswordInput = document.getElementById('unlock-password');
-  const unlockBtn = document.getElementById('unlock-btn');
-  let unlockFile = null;
-  unlockDropzone.addEventListener('click', () => unlockFileInput.click());
-  unlockDropzone.addEventListener('dragover', e => {
-    e.preventDefault();
-    unlockDropzone.classList.add('dragover');
-  });
-  unlockDropzone.addEventListener('dragleave', e => {
-    unlockDropzone.classList.remove('dragover');
-  });
-  unlockDropzone.addEventListener('drop', e => {
-    e.preventDefault();
-    unlockDropzone.classList.remove('dragover');
-    const dropped = e.dataTransfer.files;
-    if (dropped.length > 0) {
-      unlockFile = dropped[0].type === 'application/pdf' ? dropped[0] : null;
-      updateUnlockBtnState();
-    }
-  });
-  unlockFileInput.addEventListener('change', e => {
-    if (e.target.files.length > 0) {
-      unlockFile = e.target.files[0].type === 'application/pdf' ? e.target.files[0] : null;
-      updateUnlockBtnState();
-    }
-  });
-  unlockPasswordInput.addEventListener('input', () => {
-    updateUnlockBtnState();
-  });
-  function updateUnlockBtnState() {
-    unlockBtn.disabled = !(unlockFile && unlockPasswordInput.value.trim().length >= 1);
-  }
-  updateUnlockBtnState();
-
-  unlockBtn.addEventListener('click', async () => {
-    if (!unlockFile) return;
-    alert('Unlock PDF feature is not supported fully on client side due to library limitations. For now, use external tools for unlocking encrypted PDFs.');
   });
 
   // Accessibility enhancements and keyboard handling for dropzones to trigger file input on Enter / Space key
@@ -831,5 +943,7 @@
   // Initialize first tab state
   updateMergeFileList();
 </script>
+
 </body>
 </html>
+
