@@ -71,16 +71,21 @@
   /* Common file dropzone style */
   .dropzone {
     margin: 20px auto 20px;
-    border: 3px dashed #1a73e8;
+    border: 1px dashed #ccc;
     border-radius: 10px;
-    padding: 30px 15px;
+    padding: 40px 15px;
     max-width: 500px;
     text-align: center;
-    color: #1a73e8;
+    background-color: #f0f2f5;
+    color: #333;
     font-weight: 700;
     cursor: pointer;
     user-select: none;
     transition: background-color 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
   }
   .dropzone.dragover {
     background-color: #d8e6ff;
@@ -88,27 +93,65 @@
   input[type="file"] {
     display: none;
   }
+  .dropzone .upload-icon {
+    font-size: 48px;
+    color: #2a5dab;
+    filter: drop-shadow(0 0 6px #a0d8ff);
+  }
+  .dropzone button.choose-file-btn {
+    background-color: #ffd54f;
+    color: #333;
+    font-weight: 700;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #a0d8ff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .dropzone button.choose-file-btn:hover {
+    background-color: #ffca28;
+    box-shadow: 0 4px 15px rgba(255, 202, 40, 0.6);
+    transform: scale(1.05);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .dropzone button.choose-file-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: #333;
+  }
+
+  /* Primary action buttons styling */
   button.primary {
     background-color: #1a73e8;
     color: white;
     font-weight: 700;
-    padding: 12px 20px;
+    padding: 12px 28px;
     font-size: 1.1rem;
-    margin-top: 15px;
     border: none;
-    border-radius: 7px;
-    box-shadow: 0 6px 10px rgb(26 115 232 / 0.35);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.4);
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
     user-select: none;
   }
-  button.primary:disabled {
-    background-color: #aac6f7;
-    cursor: not-allowed;
-  }
   button.primary:hover:not(:disabled) {
-    background-color: #165ec9;
+    background-color: #155ab6;
+    box-shadow: 0 6px 15px rgba(21, 90, 182, 0.6);
+    transform: translateY(-2px);
   }
+  button.primary:disabled {
+    background-color: #a0c4ff;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
   .files-list {
     max-width: 500px;
     margin: 0 auto 15px;
@@ -265,7 +308,12 @@
 <main>
 <section id="merge" class="tool-section" aria-label="Merge PDF tool">
    <div class="dropzone" tabindex="0" aria-label="Drop PDF files here or click to select files" id="merge-dropzone">
-      Drop PDF files here or click to select files
+     <div class="upload-icon" aria-hidden="true">
+       <img src="https://img.icons8.com/?size=100&id=pKHKYDG3kcUf&format=png&color=000000" alt="File Upload Icon" width="48" height="48" aria-hidden="true" />
+     </div>
+     <button type="button" class="choose-file-btn" aria-label="Choose PDF files">CHOOSE FILE
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5v10z"/></svg>
+     </button>
      <input type="file" id="merge-files" accept="application/pdf" multiple aria-hidden="true" />
    </div>
    <div class="files-list" id="merge-file-list" aria-live="polite" aria-relevant="additions removals"></div>
@@ -277,7 +325,12 @@
 
  <section id="split" class="tool-section" style="display:none" aria-label="Split PDF tool">
    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="split-dropzone">
-      Drop a PDF file here or click to select file
+     <div class="upload-icon" aria-hidden="true">
+       <img src="https://img.icons8.com/?size=100&id=pKHKYDG3kcUf&format=png&color=000000" alt="File Upload Icon" width="48" height="48" aria-hidden="true" />
+     </div>
+     <button type="button" class="choose-file-btn" aria-label="Choose a PDF file">CHOOSE FILE
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5v10z"/></svg>
+     </button>
      <input type="file" id="split-file" accept="application/pdf" aria-hidden="true" />
    </div>
    <div class="pdf-preview" id="split-pdf-preview" aria-label="PDF preview area"></div>
@@ -290,18 +343,28 @@
 
  <section id="compress" class="tool-section" style="display:none" aria-label="Compress PDF tool">
    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="compress-dropzone">
-      Drop a PDF file here or click to select file
+     <div class="upload-icon" aria-hidden="true">
+       <img src="https://img.icons8.com/?size=100&id=pKHKYDG3kcUf&format=png&color=000000" alt="File Upload Icon" width="48" height="48" aria-hidden="true" />
+     </div>
+     <button type="button" class="choose-file-btn" aria-label="Choose a PDF file">CHOOSE FILE
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5v10z"/></svg>
+     </button>
      <input type="file" id="compress-file" accept="application/pdf" aria-hidden="true" />
    </div>
    <div class="pdf-preview" id="compress-pdf-preview" aria-label="PDF preview area"></div>
    <button class="primary" id="compress-btn" disabled>Compress PDF</button>
    <div class="progress-bar" id="compress-progress" aria-hidden="true"><div></div></div>
    <div class="result" id="compress-result" aria-live="polite"></div>
-</section>
+ </section>
 
  <section id="unlock" class="tool-section" style="display:none" aria-label="Unlock PDF tool">
    <div class="dropzone" tabindex="0" aria-label="Drop an encrypted PDF here or click to select file" id="unlock-dropzone">
-      Drop an encrypted PDF here or click to select file
+     <div class="upload-icon" aria-hidden="true">
+       <img src="https://img.icons8.com/?size=100&id=pKHKYDG3kcUf&format=png&color=000000" alt="File Upload Icon" width="48" height="48" aria-hidden="true" />
+     </div>
+     <button type="button" class="choose-file-btn" aria-label="Choose an encrypted PDF file">CHOOSE FILE
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5v10z"/></svg>
+     </button>
      <input type="file" id="unlock-file" accept="application/pdf" aria-hidden="true" />
    </div>
    <div class="pdf-preview" id="unlock-pdf-preview" aria-label="PDF preview area"></div>
@@ -311,11 +374,16 @@
    <button class="primary" id="unlock-btn" disabled>Unlock PDF</button>
    <div class="progress-bar" id="unlock-progress" aria-hidden="true"><div></div></div>
    <div class="result" id="unlock-result" aria-live="polite"></div>
-</section>
+ </section>
 
  <section id="lock" class="tool-section" style="display:none" aria-label="Lock PDF tool">
    <div class="dropzone" tabindex="0" aria-label="Drop a PDF file here or click to select file" id="lock-dropzone">
-      Drop a PDF file here or click to select file
+     <div class="upload-icon" aria-hidden="true">
+       <img src="https://img.icons8.com/?size=100&id=pKHKYDG3kcUf&format=png&color=000000" alt="File Upload Icon" width="48" height="48" aria-hidden="true" />
+     </div>
+     <button type="button" class="choose-file-btn" aria-label="Choose a PDF file">CHOOSE FILE
+       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5v10z"/></svg>
+     </button>
      <input type="file" id="lock-file" accept="application/pdf" aria-hidden="true" />
    </div>
    <div class="pdf-preview" id="lock-pdf-preview" aria-label="PDF preview area"></div>
@@ -325,7 +393,7 @@
    <button class="primary" id="lock-btn" disabled>Lock PDF</button>
    <div class="progress-bar" id="lock-progress" aria-hidden="true"><div></div></div>
    <div class="result" id="lock-result" aria-live="polite"></div>
-</section>
+ </section>
 
  <!-- For other tools, show a simple coming soon message -->
  <section id="pdf2word" class="tool-section" style="display:none; text-align:center; color:#666; padding-top: 80px;">
@@ -534,6 +602,11 @@
   const mergeBtn = document.getElementById('merge-btn');
   let mergeFiles = [];
 
+  // Updated click event to trigger file input on button click as well
+  mergeDropzone.querySelector('.choose-file-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    mergeFileInput.click();
+  });
   mergeDropzone.addEventListener('click', () => mergeFileInput.click());
   mergeDropzone.addEventListener('dragover', e => {
     e.preventDefault();
@@ -628,6 +701,11 @@
   const splitBtn = document.getElementById('split-btn');
   let splitFile = null;
 
+  // Updated click event to trigger file input on button click as well
+  splitDropzone.querySelector('.choose-file-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    splitFileInput.click();
+  });
   splitDropzone.addEventListener('click', () => splitFileInput.click());
   splitDropzone.addEventListener('dragover', e => {
     e.preventDefault();
@@ -732,6 +810,12 @@
   const compressPdfPreview = document.getElementById('compress-pdf-preview');
   const compressBtn = document.getElementById('compress-btn');
   let compressFile = null;
+
+  // Updated click event to trigger file input on button click as well
+  compressDropzone.querySelector('.choose-file-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    compressFileInput.click();
+  });
   compressDropzone.addEventListener('click', () => compressFileInput.click());
   compressDropzone.addEventListener('dragover', e => {
     e.preventDefault();
@@ -799,6 +883,12 @@
   const unlockPasswordInput = document.getElementById('unlock-password');
   const unlockBtn = document.getElementById('unlock-btn');
   let unlockFile = null;
+
+  // Updated click event to trigger file input on button click as well
+  unlockDropzone.querySelector('.choose-file-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    unlockFileInput.click();
+  });
   unlockDropzone.addEventListener('click', () => unlockFileInput.click());
   unlockDropzone.addEventListener('dragover', e => {
     e.preventDefault();
@@ -845,6 +935,11 @@
   const lockBtn = document.getElementById('lock-btn');
   let lockFile = null;
 
+  // Updated click event to trigger file input on button click as well
+  lockDropzone.querySelector('.choose-file-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    lockFileInput.click();
+  });
   lockDropzone.addEventListener('click', () => lockFileInput.click());
   lockDropzone.addEventListener('dragover', e => {
     e.preventDefault();
